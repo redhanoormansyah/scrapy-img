@@ -1,0 +1,33 @@
+download gambar install Pillow
+di file setting.py tambahkan konfigurasi di baris kode  67
+ITEM_PIPELINES = {
+   'scrapy.pipelines.images.ImagesPipeline': 1,
+}
+IMAGES_STORE = 'D:/zona scraping/scrapy-img/foobar'
+mengedit dictionarynya dengan ini
+'scrapy.pipelines.images.ImagesPipeline': 1,
+lalu di luar dicttionary
+IMAGES_STORE = 'D:/zona scraping/scrapy-img/foobar'
+sebagai tempat penyimpanan file nantinya
+di file item.py class default isikan atribut yang diperlukan misalnya
+    title = scrapy.Field()
+    price = scrapy.Field()
+    image_urls = scrapy.Field()
+    images = scrapy.Field()
+yang akan nanti kita panggil di file scrapy (books)
+panggil package di file scrapy
+from scrapy.loader import ItemLoader
+from books_crawler.items import BooksCrawlerItem
+di method eksekusi panngil method ItemLoader contoh :
+        l = ItemLoader(item=BooksCrawlerItem(), response=response)
+isikan atribut eksekusi
+        title = response.css('h1::text').extract_first()
+        price = response.xpath('//*[@class="price_color"]/text()').extract_first()
+
+        image_urls = response.xpath('//img/@src').extract_first()
+        image_urls = image_urls.replace("../..", "http://books.toscrape.com")
+        l.add_value('title',title)
+        l.add_value('price',price)
+        l.add_value('image_urls',image_urls)
+        return l.load_item()
+
